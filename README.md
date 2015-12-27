@@ -4,6 +4,10 @@ This Composer plugin defines constants within the generated `autoload.php` for t
 autoloader factory class name, the composer.json file, the base directory, the bin directory,
 and the vendor directory.
 
+If you need more runtime introspection in your Composer project, see [joshdifabio/composed][].
+
+[joshdifabio/composed]: https://github.com/joshdifabio/composed
+
 ## Installation
 
 ```bash
