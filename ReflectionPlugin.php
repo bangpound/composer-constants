@@ -90,38 +90,22 @@ class ReflectionPlugin implements PluginInterface, EventSubscriberInterface
         $contents = file_get_contents($autoloadFile);
         $constant = '';
 
-        $autoloadClass = var_export(self::COMPOSER_AUTOLOADER_BASE.$suffix, true);
+        $values = array_map(function ($value) {
+            return var_export($value, true);
+        }, array(
+          'AUTOLOAD_CLASS' => self::COMPOSER_AUTOLOADER_BASE.$suffix,
+          'BASE_DIR' => getcwd(),
+          'BIN_DIR' => $binDir,
+          'FILE' => realpath(Factory::getComposerFile()),
+          'VENDOR_DIR' => $vendorDir,
+        ));
 
-        $io->write('<info>Generating '.$this->constantPrefix.'AUTOLOAD_CLASS constant</info>');
-        $constant .= "if (!defined('{$this->constantPrefix}AUTOLOAD_CLASS')) {\n";
-        $constant .= sprintf("    define('{$this->constantPrefix}AUTOLOAD_CLASS', %s);\n", $autoloadClass);
-        $constant .= "}\n\n";
-
-        $vendorDir = var_export($vendorDir, true);
-
-        $io->write('<info>Generating '.$this->constantPrefix.'VENDOR_DIR constant</info>');
-        $constant .= "if (!defined('{$this->constantPrefix}VENDOR_DIR')) {\n";
-        $constant .= sprintf("    define('{$this->constantPrefix}VENDOR_DIR', %s);\n", $vendorDir);
-        $constant .= "}\n\n";
-
-        $binDir = var_export($binDir, true);
-
-        $io->write('<info>Generating '.$this->constantPrefix.'BIN_DIR constant</info>');
-        $constant .= "if (!defined('{$this->constantPrefix}BIN_DIR')) {\n";
-        $constant .= sprintf("    define('{$this->constantPrefix}BIN_DIR', %s);\n", $binDir);
-        $constant .= "}\n\n";
-
-        $baseDir = var_export(getcwd(), true);
-
-        $io->write('<info>Generating '.$this->constantPrefix.'BASE_DIR constant</info>');
-        $constant .= "if (!defined('{$this->constantPrefix}BASE_DIR')) {\n";
-        $constant .= sprintf("    define('{$this->constantPrefix}BASE_DIR', %s);\n", $baseDir);
-        $constant .= "}\n\n";
-
-        $io->write('<info>Generating '.$this->constantPrefix.'FILE constant</info>');
-        $constant .= "if (!defined('{$this->constantPrefix}FILE')) {\n";
-        $constant .= sprintf("    define('{$this->constantPrefix}FILE', %s);\n", var_export(realpath(Factory::getComposerFile()), true));
-        $constant .= "}\n\n";
+        foreach ($values as $key => $value) {
+            $io->write('<info>Generating '.$this->constantPrefix.$key.' constant</info>');
+            $constant .= "if (!defined('{$this->constantPrefix}{$key}')) {\n";
+            $constant .= sprintf("    define('{$this->constantPrefix}{$key}', %s);\n", $value);
+            $constant .= "}\n\n";
+        }
 
         // Regex modifiers:
         // "m": \s matches newlines
