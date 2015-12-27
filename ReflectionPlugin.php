@@ -25,6 +25,11 @@ class ReflectionPlugin implements PluginInterface, EventSubscriberInterface
     protected $io;
 
     /**
+     * @var string
+     */
+    protected $constantPrefix = 'COMPOSER_';
+
+    /**
      * @var bool
      */
     private $runPostAutoloadDump = true;
@@ -43,6 +48,11 @@ class ReflectionPlugin implements PluginInterface, EventSubscriberInterface
     {
         $this->composer = $composer;
         $this->io = $io;
+
+        $extra = $this->composer->getPackage()->getExtra();
+        if (isset($extra['composer-constant-prefix'])) {
+            $this->constantPrefix = $extra['composer-constant-prefix'];
+        }
     }
 
     public function postAutoloadDump(Event $event)
@@ -81,35 +91,35 @@ class ReflectionPlugin implements PluginInterface, EventSubscriberInterface
 
         $autoloadClass = var_export(self::COMPOSER_AUTOLOADER_BASE.$suffix, true);
 
-        $io->write('<info>Generating COMPOSER_AUTOLOAD_CLASS constant</info>');
-        $constant .= "if (!defined('COMPOSER_AUTOLOAD_CLASS')) {\n";
-        $constant .= sprintf("    define('COMPOSER_AUTOLOAD_CLASS', %s);\n", $autoloadClass);
+        $io->write('<info>Generating '.$this->constantPrefix.'AUTOLOAD_CLASS constant</info>');
+        $constant .= "if (!defined('{$this->constantPrefix}AUTOLOAD_CLASS')) {\n";
+        $constant .= sprintf("    define('{$this->constantPrefix}AUTOLOAD_CLASS', %s);\n", $autoloadClass);
         $constant .= "}\n\n";
 
         $vendorDir = var_export($vendorDir, true);
 
-        $io->write('<info>Generating COMPOSER_VENDOR_DIR constant</info>');
-        $constant .= "if (!defined('COMPOSER_VENDOR_DIR')) {\n";
-        $constant .= sprintf("    define('COMPOSER_VENDOR_DIR', %s);\n", $vendorDir);
+        $io->write('<info>Generating '.$this->constantPrefix.'VENDOR_DIR constant</info>');
+        $constant .= "if (!defined('{$this->constantPrefix}VENDOR_DIR')) {\n";
+        $constant .= sprintf("    define('{$this->constantPrefix}VENDOR_DIR', %s);\n", $vendorDir);
         $constant .= "}\n\n";
 
         $binDir = var_export($binDir, true);
 
-        $io->write('<info>Generating COMPOSER_BIN_DIR constant</info>');
-        $constant .= "if (!defined('COMPOSER_BIN_DIR')) {\n";
-        $constant .= sprintf("    define('COMPOSER_BIN_DIR', %s);\n", $binDir);
+        $io->write('<info>Generating '.$this->constantPrefix.'BIN_DIR constant</info>');
+        $constant .= "if (!defined('{$this->constantPrefix}BIN_DIR')) {\n";
+        $constant .= sprintf("    define('{$this->constantPrefix}BIN_DIR', %s);\n", $binDir);
         $constant .= "}\n\n";
 
         $baseDir = var_export(getcwd(), true);
 
-        $io->write('<info>Generating COMPOSER_BASE_DIR constant</info>');
-        $constant .= "if (!defined('COMPOSER_BASE_DIR')) {\n";
-        $constant .= sprintf("    define('COMPOSER_BASE_DIR', %s);\n", $baseDir);
+        $io->write('<info>Generating '.$this->constantPrefix.'BASE_DIR constant</info>');
+        $constant .= "if (!defined('{$this->constantPrefix}BASE_DIR')) {\n";
+        $constant .= sprintf("    define('{$this->constantPrefix}BASE_DIR', %s);\n", $baseDir);
         $constant .= "}\n\n";
 
-        $io->write('<info>Generating COMPOSER_FILE constant</info>');
-        $constant .= "if (!defined('COMPOSER_FILE')) {\n";
-        $constant .= sprintf("    define('COMPOSER_FILE', %s);\n", var_export(realpath(Factory::getComposerFile()), true));
+        $io->write('<info>Generating '.$this->constantPrefix.'FILE constant</info>');
+        $constant .= "if (!defined('{$this->constantPrefix}FILE')) {\n";
+        $constant .= sprintf("    define('{$this->constantPrefix}FILE', %s);\n", var_export(realpath(Factory::getComposerFile()), true));
         $constant .= "}\n\n";
 
         // Regex modifiers:
