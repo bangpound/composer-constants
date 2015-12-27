@@ -1,5 +1,5 @@
 {
-    "name": "bangpound/composer-reflection-plugin",
+    "name": "bangpound/composer-constants-plugin",
     "type": "composer-plugin",
     "require": {
         "composer-plugin-api": "^1.0"
@@ -20,7 +20,7 @@
         }
     },
     "extra": {
-        "class": "Bangpound\\Composer\\ReflectionPlugin",
+        "class": "Bangpound\\Composer\\ConstantsPlugin",
         "branch-alias": {
             "dev-master": "1.0.x-dev"
         }

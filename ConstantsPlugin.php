@@ -10,7 +10,7 @@ use Composer\Plugin\PluginInterface;
 use Composer\Script\Event;
 use Composer\Script\ScriptEvents;
 
-class ReflectionPlugin implements PluginInterface, EventSubscriberInterface
+class ConstantsPlugin implements PluginInterface, EventSubscriberInterface
 {
     const COMPOSER_AUTOLOADER_BASE = 'ComposerAutoloaderInit';
 
