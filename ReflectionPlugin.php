@@ -72,18 +72,19 @@ class ReflectionPlugin implements PluginInterface, EventSubscriberInterface
         $binDir = $compConfig->get('bin-dir');
         $autoloadFile = $vendorDir.'/autoload.php';
 
-        if (!$suffix && !$compConfig->get('autoloader-suffix') && is_readable($autoloadFile)) {
-            $content = file_get_contents($vendorDir.'/autoload.php');
-            if (preg_match('{'.self::COMPOSER_AUTOLOADER_BASE.'([^:\s]+)::}', $content, $match)) {
-                $suffix = $match[1];
-            }
-        }
 
         if (!file_exists($autoloadFile)) {
             throw new \RuntimeException(sprintf(
               'Could not adjust autoloader: The file %s was not found.',
               $autoloadFile
             ));
+        }
+
+        if (!$suffix && !$compConfig->get('autoloader-suffix') && is_readable($autoloadFile)) {
+            $content = file_get_contents($vendorDir.'/autoload.php');
+            if (preg_match('{'.self::COMPOSER_AUTOLOADER_BASE.'([^:\s]+)::}', $content, $match)) {
+                $suffix = $match[1];
+            }
         }
 
         $contents = file_get_contents($autoloadFile);
