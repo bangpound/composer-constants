@@ -64,14 +64,11 @@ class ReflectionPlugin implements PluginInterface, EventSubscriberInterface
 
         $this->runPostAutoloadDump = false;
 
-        $io = $this->io;
-
         $compConfig = $this->composer->getConfig();
         $suffix = $compConfig->get('autoloader-suffix');
         $vendorDir = $compConfig->get('vendor-dir');
         $binDir = $compConfig->get('bin-dir');
         $autoloadFile = $vendorDir.'/autoload.php';
-
 
         if (!file_exists($autoloadFile)) {
             throw new \RuntimeException(sprintf(
@@ -101,7 +98,7 @@ class ReflectionPlugin implements PluginInterface, EventSubscriberInterface
         ));
 
         foreach ($values as $key => $value) {
-            $io->write('<info>Generating '.$this->constantPrefix.$key.' constant</info>');
+            $this->io->write('<info>Generating '.$this->constantPrefix.$key.' constant</info>');
             $constant .= "if (!defined('{$this->constantPrefix}{$key}')) {\n";
             $constant .= sprintf("    define('{$this->constantPrefix}{$key}', %s);\n", $value);
             $constant .= "}\n\n";
