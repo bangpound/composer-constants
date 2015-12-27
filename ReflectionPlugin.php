@@ -64,10 +64,10 @@ class ReflectionPlugin implements PluginInterface, EventSubscriberInterface
 
         $this->runPostAutoloadDump = false;
 
-        $compConfig = $this->composer->getConfig();
-        $suffix = $compConfig->get('autoloader-suffix');
-        $vendorDir = $compConfig->get('vendor-dir');
-        $binDir = $compConfig->get('bin-dir');
+        $config = $this->composer->getConfig();
+        $suffix = $config->get('autoloader-suffix');
+        $vendorDir = $config->get('vendor-dir');
+        $binDir = $config->get('bin-dir');
         $autoloadFile = $vendorDir.'/autoload.php';
 
         if (!file_exists($autoloadFile)) {
@@ -77,7 +77,7 @@ class ReflectionPlugin implements PluginInterface, EventSubscriberInterface
             ));
         }
 
-        if (!$suffix && !$compConfig->get('autoloader-suffix') && is_readable($autoloadFile)) {
+        if (!$suffix && !$config->get('autoloader-suffix') && is_readable($autoloadFile)) {
             $content = file_get_contents($vendorDir.'/autoload.php');
             if (preg_match('{'.self::COMPOSER_AUTOLOADER_BASE.'([^:\s]+)::}', $content, $match)) {
                 $suffix = $match[1];
