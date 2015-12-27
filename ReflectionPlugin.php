@@ -15,6 +15,16 @@ class ReflectionPlugin implements PluginInterface, EventSubscriberInterface
     const COMPOSER_AUTOLOADER_BASE = 'ComposerAutoloaderInit';
 
     /**
+     * @var Composer
+     */
+    protected $composer;
+
+    /**
+     * @var IOInterface
+     */
+    protected $io;
+
+    /**
      * @var bool
      */
     private $runPostAutoloadDump = true;
@@ -31,6 +41,8 @@ class ReflectionPlugin implements PluginInterface, EventSubscriberInterface
 
     public function activate(Composer $composer, IOInterface $io)
     {
+        $this->composer = $composer;
+        $this->io = $io;
     }
 
     public function postAutoloadDump(Event $event)
@@ -42,9 +54,9 @@ class ReflectionPlugin implements PluginInterface, EventSubscriberInterface
 
         $this->runPostAutoloadDump = false;
 
-        $io = $event->getIO();
+        $io = $this->io;
 
-        $compConfig = $event->getComposer()->getConfig();
+        $compConfig = $this->composer->getConfig();
         $suffix = $compConfig->get('autoloader-suffix');
         $vendorDir = $compConfig->get('vendor-dir');
         $binDir = $compConfig->get('bin-dir');
