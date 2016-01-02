@@ -2,7 +2,8 @@
     "name": "bangpound/composer-constants",
     "type": "composer-plugin",
     "require": {
-        "composer-plugin-api": "^1.0"
+        "composer-plugin-api": "^1.0",
+        "webmozart/path-util": "^2.3"
     },
     "require-dev": {
         "composer/composer": "~1.0@dev"
