@@ -90,6 +90,7 @@ class ConstantsPlugin implements PluginInterface, EventSubscriberInterface
 
         $values = array(
           'AUTOLOAD_CLASS' => var_export(self::COMPOSER_AUTOLOADER_BASE.$suffix, true),
+          'DEV' => var_export($event->isDevMode(), true),
         );
 
         foreach ($values as $key => $value) {
