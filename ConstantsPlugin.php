@@ -41,7 +41,7 @@ class ConstantsPlugin implements PluginInterface, EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-          ScriptEvents::POST_AUTOLOAD_DUMP => 'postAutoloadDump',
+            ScriptEvents::POST_AUTOLOAD_DUMP => 'postAutoloadDump',
         );
     }
 
@@ -69,18 +69,18 @@ class ConstantsPlugin implements PluginInterface, EventSubscriberInterface
         $suffix = $config->get('autoloader-suffix');
         $vendorDir = $config->get('vendor-dir');
         $binDir = $config->get('bin-dir');
-        $autoloadFile = $vendorDir.'/autoload.php';
+        $autoloadFile = $vendorDir . '/autoload.php';
 
         if (!file_exists($autoloadFile)) {
             throw new \RuntimeException(sprintf(
-              'Could not adjust autoloader: The file %s was not found.',
-              $autoloadFile
+                'Could not adjust autoloader: The file %s was not found.',
+                $autoloadFile
             ));
         }
 
         if (!$suffix && !$config->get('autoloader-suffix') && is_readable($autoloadFile)) {
-            $content = file_get_contents($vendorDir.'/autoload.php');
-            if (preg_match('{'.self::COMPOSER_AUTOLOADER_BASE.'([^:\s]+)::}', $content, $match)) {
+            $content = file_get_contents($vendorDir . '/autoload.php');
+            if (preg_match('{' . self::COMPOSER_AUTOLOADER_BASE . '([^:\s]+)::}', $content, $match)) {
                 $suffix = $match[1];
             }
         }
@@ -89,11 +89,11 @@ class ConstantsPlugin implements PluginInterface, EventSubscriberInterface
         $constant = '';
 
         $values = array(
-          'AUTOLOAD_CLASS' => var_export(self::COMPOSER_AUTOLOADER_BASE.$suffix, true),
+            'AUTOLOAD_CLASS' => var_export(self::COMPOSER_AUTOLOADER_BASE . $suffix, true),
         );
 
         foreach ($values as $key => $value) {
-            $this->io->write('<info>Generating '.$this->constantPrefix.$key.' constant</info>');
+            $this->io->write('<info>Generating ' . $this->constantPrefix . $key . ' constant</info>');
             $constant .= "if (!defined('{$this->constantPrefix}{$key}')) {\n";
             $constant .= sprintf("    define('{$this->constantPrefix}{$key}', %s);\n", $value);
             $constant .= "}\n\n";
@@ -102,24 +102,25 @@ class ConstantsPlugin implements PluginInterface, EventSubscriberInterface
         $values = array_map(function ($value) {
             return var_export($value, true);
         }, array(
-          'BASE_DIR' => Path::makeRelative(getcwd(), $vendorDir),
-          'BIN_DIR' => Path::makeRelative($binDir, $vendorDir),
-          'FILE' => Path::makeRelative(realpath(Factory::getComposerFile()), $vendorDir),
+            'BASE_DIR' => Path::makeRelative(getcwd(), $vendorDir),
+            'BIN_DIR' => Path::makeRelative($binDir, $vendorDir),
+            'FILE' => Path::makeRelative(realpath(Factory::getComposerFile()), $vendorDir),
         ));
 
         foreach ($values as $key => $value) {
-            $this->io->write('<info>Generating '.$this->constantPrefix.$key.' constant</info>');
+            $this->io->write('<info>Generating ' . $this->constantPrefix . $key . ' constant</info>');
             $constant .= "if (!defined('{$this->constantPrefix}{$key}')) {\n";
-            $constant .= sprintf("    define('{$this->constantPrefix}{$key}', realpath(__DIR__ . DIRECTORY_SEPARATOR . %s));\n", $value);
+            $constant .= sprintf("    define('{$this->constantPrefix}{$key}', realpath(__DIR__ . DIRECTORY_SEPARATOR . %s));\n",
+                $value);
             $constant .= "}\n\n";
         }
 
         $values = array(
-          'VENDOR_DIR' => $vendorDir,
+            'VENDOR_DIR' => $vendorDir,
         );
 
         foreach ($values as $key => $value) {
-            $this->io->write('<info>Generating '.$this->constantPrefix.$key.' constant</info>');
+            $this->io->write('<info>Generating ' . $this->constantPrefix . $key . ' constant</info>');
             $constant .= "if (!defined('{$this->constantPrefix}{$key}')) {\n";
             $constant .= sprintf("    define('{$this->constantPrefix}{$key}', realpath(__DIR__));\n");
             $constant .= "}\n\n";
@@ -129,7 +130,7 @@ class ConstantsPlugin implements PluginInterface, EventSubscriberInterface
         // "m": \s matches newlines
         // "D": $ matches at EOF only
         // Translation: insert before the last "return" in the file
-        $contents = preg_replace('/\n(?=return [^;]+;\s*$)/mD', "\n".$constant, $contents);
+        $contents = preg_replace('/\n(?=return [^;]+;\s*$)/mD', "\n" . $constant, $contents);
 
         file_put_contents($autoloadFile, $contents);
     }
