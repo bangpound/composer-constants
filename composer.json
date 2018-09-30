@@ -1,12 +1,13 @@
 {
     "name": "bangpound/composer-constants",
     "type": "composer-plugin",
+    "description": "Automatically define constants that expose details of the Composer configuration",
     "require": {
-        "composer-plugin-api": "^1.0",
+        "composer-plugin-api": "^1.1",
         "webmozart/path-util": "^2.3"
     },
     "require-dev": {
-        "composer/composer": "~1.0@dev"
+        "composer/composer": "^1.0"
     },
     "license": "MIT",
     "authors": [
