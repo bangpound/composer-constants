@@ -3,11 +3,11 @@
     "type": "composer-plugin",
     "description": "Automatically define constants that expose details of the Composer configuration",
     "require": {
-        "composer-plugin-api": "^1.1",
-        "webmozart/path-util": "^2.3"
+        "composer-plugin-api": "^2.0"
     },
     "require-dev": {
-        "composer/composer": "^1.0"
+        "composer/composer": "^2.0",
+        "phpunit/phpunit": "^10.3"
     },
     "license": "MIT",
     "authors": [
@@ -18,7 +18,12 @@
     ],
     "autoload": {
         "psr-4": {
-            "Bangpound\\Composer\\": ""
+            "Bangpound\\Composer\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Bangpound\\Composer\\Tests\\": "tests/"
         }
     },
     "extra": {
